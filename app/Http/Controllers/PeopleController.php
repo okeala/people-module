@@ -17,7 +17,7 @@ class PeopleController extends Controller
     public function index(\Illuminate\Http\Request $request)
     {
         $roles = cache()->remember('people.roles', 3600, fn () =>
-        \Modules\People\Models\Person::query()
+        Person::query()
             ->whereNotNull('role')
             ->distinct()
             ->orderBy('role')
@@ -25,7 +25,7 @@ class PeopleController extends Controller
             ->all()
         );
 
-        $people = \Modules\People\Models\Person::query()
+        $people = Person::query()
             ->when($request->filled('role'), fn($q) => $q->where('role', $request->string('role')))
             ->with(['tags:id,name,slug,color','media','address'])
             ->latest('id')
@@ -55,23 +55,29 @@ class PeopleController extends Controller
     public function show(Person $person)
     {
         $user = auth()->user();
-
-        $person->load([
+        $with = [
             'tags:id,name,slug,color',
             'media',
             'address',
-            // 6 derniers articles déjà chargés (comme avant)
-            'articles' => fn($q) => $q->published()
+        ];
+
+        if (class_exists(\Modules\Blog\Models\Article::class)) {
+            $with['articles'] = fn ($q) => $q->published()
                 ->latest('published_at')
                 ->with(['media','tags:id,name,slug,color'])
-                ->limit(6),
-            // 6 documents visibles pour l'utilisateur courant
-            'documents' => fn($q) => $q->published()
+                ->limit(6);
+        }
+
+        if (class_exists(\Modules\Documents\Models\Document::class)) {
+            $with['documents'] = fn ($q) => $q->published()
                 ->visibleFor($user)
                 ->latest('published_at')
                 ->with(['media','tags:id,name,slug,color'])
-                ->limit(6),
-        ]);
+                ->limit(6);
+        }
+
+        $person->load($with);
+
         return view('people::people.show', compact('person'));
     }
 

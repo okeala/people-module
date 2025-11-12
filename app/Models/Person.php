@@ -3,16 +3,19 @@
 namespace Modules\People\Models;
 
 use App\Models\User;
+use Illuminate\Database\Eloquent\Relations\Relation;
+use Modules\Blog\Concerns\BloggingFeatures;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
+use Modules\Documents\Models\Document;
 use Modules\Helpcenter\Models\Address;
 use Modules\Helpcenter\Models\Tag;
+use Modules\Helpcenter\Relations\NullRelation;
 use Modules\People\Database\Factories\PersonFactory;
 use Modules\Workshops\Models\InstructorSpecialty;
-use Modules\Workshops\Models\Workshop;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
@@ -32,9 +35,7 @@ class Person extends User implements HasMedia
     // Relation avec les spécialités
     public function specialties(): HasMany
     {
-        if(class_exists(InstructorSpecialty::class)){
-            return $this->hasMany(InstructorSpecialty::class, 'person_id');
-        }
+        return $this->hasMany(InstructorSpecialty::class, 'person_id');
     }
 
     // Méthodes utilitaires pour les spécialités
@@ -74,33 +75,30 @@ class Person extends User implements HasMedia
         });
     }
 
-    // Relations existantes...
-    public function articles(): HasMany
-    {
-        if(class_exists(Workshop::class)) {
-            return $this->hasMany(\Modules\Blog\Models\Article::class, 'author_id');
-        }
-    }
-
     public function tags(): MorphToMany
     {
-        if(class_exists(Workshop::class)) {
-            return $this->morphToMany(Tag::class, 'taggable')->withTimestamps();
-        }
+        return $this->morphToMany(Tag::class, 'taggable')->withTimestamps();
     }
 
-    public function documents(): HasMany
+    public function articles(): HasMany|NullRelation
     {
-        if(class_exists(Workshop::class)) {
-            return $this->hasMany(\Modules\Documents\Models\Document::class, 'person_id');
-        }
+        $class = \Modules\Blog\Models\Article::class;
+        return class_exists($class)
+            ? $this->hasMany($class, 'author_id')
+            : new NullRelation($this);
+    }
+
+    public function documents(): HasMany|NullRelation
+    {
+        $class = \Modules\Documents\Models\Document::class;
+        return class_exists($class)
+            ? $this->hasMany($class, 'owner_id')
+            : new NullRelation($this);
     }
 
     public function workshops(): BelongsToMany
     {
-        if(class_exists(Workshop::class)){
-            return $this->belongsToMany(\Modules\Workshops\Models\Workshop::class, 'workshop_instructor')->withTimestamps();
-        }
+        return $this->belongsToMany(\Modules\Workshops\Models\Workshop::class, 'workshop_instructor')->withTimestamps();
     }
 
     public function address(): HasOne

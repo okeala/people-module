@@ -8,6 +8,9 @@
             "email": "demo@example.org"
         }
     ],
+    "require": {
+        "okeala/helpcenter-module": "*"
+    },
     "extra": {
         "laravel": {
             "providers": [],
