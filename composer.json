@@ -1,0 +1,31 @@
+{
+    "name": "okeala/people-module",
+    "description": "A laravel module made to manage people in your Laravel installation ecosystem.",
+    "type": "laravel-module",
+    "authors": [
+        {
+            "name": "Steph Mess",
+            "email": "demo@example.org"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [],
+            "aliases": {
+
+            }
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Modules\\People\\": "app/",
+            "Modules\\People\\Database\\Factories\\": "database/factories/",
+            "Modules\\People\\Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Modules\\People\\Tests\\": "tests/"
+        }
+    }
+}
