@@ -2,8 +2,12 @@
 
 namespace Modules\People\Providers;
 
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
+use Modules\Helpcenter\Models\Faq;
+use Modules\Helpcenter\Models\Tag;
+use Modules\People\Models\Person;
 use Nwidart\Modules\Traits\PathNamespace;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
@@ -27,6 +31,10 @@ class PeopleServiceProvider extends ServiceProvider
         $this->registerConfig();
         $this->registerViews();
         $this->loadMigrationsFrom(module_path($this->name, 'database/migrations'));
+
+        Relation::enforceMorphMap([
+            'person'     => Person::class,
+        ]);
     }
 
     /**
