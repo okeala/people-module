@@ -12,6 +12,7 @@ use Modules\Helpcenter\Models\Address;
 use Modules\Helpcenter\Models\Tag;
 use Modules\People\Database\Factories\PersonFactory;
 use Modules\Workshops\Models\InstructorSpecialty;
+use Modules\Workshops\Models\Workshop;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
@@ -31,7 +32,9 @@ class Person extends User implements HasMedia
     // Relation avec les spécialités
     public function specialties(): HasMany
     {
-        return $this->hasMany(InstructorSpecialty::class, 'person_id');
+        if(class_exists(InstructorSpecialty::class)){
+            return $this->hasMany(InstructorSpecialty::class, 'person_id');
+        }
     }
 
     // Méthodes utilitaires pour les spécialités
@@ -74,22 +77,30 @@ class Person extends User implements HasMedia
     // Relations existantes...
     public function articles(): HasMany
     {
-        return $this->hasMany(\Modules\Blog\Models\Article::class, 'author_id');
+        if(class_exists(Workshop::class)) {
+            return $this->hasMany(\Modules\Blog\Models\Article::class, 'author_id');
+        }
     }
 
     public function tags(): MorphToMany
     {
-        return $this->morphToMany(Tag::class, 'taggable')->withTimestamps();
+        if(class_exists(Workshop::class)) {
+            return $this->morphToMany(Tag::class, 'taggable')->withTimestamps();
+        }
     }
 
     public function documents(): HasMany
     {
-        return $this->hasMany(\Modules\Documents\Models\Document::class, 'person_id');
+        if(class_exists(Workshop::class)) {
+            return $this->hasMany(\Modules\Documents\Models\Document::class, 'person_id');
+        }
     }
 
     public function workshops(): BelongsToMany
     {
-        return $this->belongsToMany(\Modules\Workshops\Models\Workshop::class, 'workshop_instructor')->withTimestamps();
+        if(class_exists(Workshop::class)){
+            return $this->belongsToMany(\Modules\Workshops\Models\Workshop::class, 'workshop_instructor')->withTimestamps();
+        }
     }
 
     public function address(): HasOne
