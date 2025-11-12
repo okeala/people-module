@@ -8,7 +8,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
-use Modules\Documents\Models\Document;
 use Modules\Helpcenter\Models\Address;
 use Modules\Helpcenter\Models\Tag;
 use Modules\People\Database\Factories\PersonFactory;

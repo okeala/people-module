@@ -1,10 +1,11 @@
 {
-    "name": "nwidart/people",
-    "description": "",
+    "name": "okeala/people-module",
+    "description": "A laravel module made to manage people in your Laravel installation ecosystem.",
+    "type": "laravel-module",
     "authors": [
         {
-            "name": "Nicolas Widart",
-            "email": "n.widart@gmail.com"
+            "name": "Steph Mess",
+            "email": "demo@example.org"
         }
     ],
     "extra": {

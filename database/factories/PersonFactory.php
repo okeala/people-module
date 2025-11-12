@@ -3,7 +3,6 @@
 namespace Modules\People\Database\Factories;
 
 use Database\Factories\UserFactory;
-use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -22,7 +21,7 @@ class PersonFactory extends UserFactory
             'name'              => $name,
             'email'             => Str::slug($name).'.'.$this->faker->unique()->numberBetween(1000, 9999).'@people.qapas.local',
             'password'          => Hash::make('password'),
-            'role'              => 'resident',
+            'role'              => 'user',
             'role_description'  => null,
             'is_admin'          => false,
             'is_editor'         => false,
@@ -44,6 +43,7 @@ class PersonFactory extends UserFactory
 
     // Convenience states
     public function resident(): static   { return $this->role('resident'); }
+    public function user(): static   { return $this->role('user'); }
     public function consultant(): static { return $this->role('consultant'); }
     public function supplier(): static   { return $this->role('supplier'); }
     public function authority(): static  { return $this->role('authority'); }
